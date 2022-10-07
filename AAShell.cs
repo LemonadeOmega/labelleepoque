@@ -15,30 +15,8 @@ public class AAShell : MonoBehaviour
     void Start()
     {
         airship = GameObject.Find("Airship").GetComponent<Airship>();
-    }
 
-    void Update()
-    {
-        this.transform.Translate(Vector3.right * AAShellScala * Time.deltaTime);
-
-        Chronometre += Time.deltaTime;
-
-        if (Chronometre >= 5.0f)
-        {
-            Instantiate(ExplosionEffect, this.transform.position, Quaternion.identity);
-
-            Collider[] shock = Physics.OverlapSphere(this.transform.position, 0.1f, 1 << 9);
-
-            foreach (var shockdamage in shock)
-            {
-                if (shockdamage.gameObject.CompareTag("AIRPOCKET") || shockdamage.gameObject.CompareTag("HYDROGEN"))
-                {
-                    airship.AirshipDurability -= 0.001f;
-                }
-            }
-
-            Destroy(this.gameObject);
-        }
+        StartCoroutine(ShellBallistics());
     }
 
     void OnTriggerEnter(Collider collider)
@@ -55,6 +33,35 @@ public class AAShell : MonoBehaviour
         if (collider.gameObject.CompareTag("AIRPOCKET") || collider.gameObject.CompareTag("HYDROGEN") || collider.gameObject.CompareTag("PROPELLER"))
         {
             Destroy(this.gameObject);
+        }
+    }
+
+    IEnumerator ShellBallistics()
+    {
+        while (true)
+        {
+            this.transform.Translate(Vector3.right * AAShellScala * Time.deltaTime);
+
+            Chronometre += Time.deltaTime;
+
+            if (Chronometre >= 5.0f)
+            {
+                Instantiate(ExplosionEffect, this.transform.position, Quaternion.identity);
+
+                Collider[] shock = Physics.OverlapSphere(this.transform.position, 0.1f, 1 << 9);
+
+                foreach (var shockdamage in shock)
+                {
+                    if (shockdamage.gameObject.CompareTag("AIRPOCKET") || shockdamage.gameObject.CompareTag("HYDROGEN"))
+                    {
+                        airship.AirshipDurability -= 0.001f;
+                    }
+                }
+
+                Destroy(this.gameObject);
+            }
+
+            yield return null;
         }
     }
 }

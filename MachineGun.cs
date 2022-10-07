@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class MachineGun : MonoBehaviour
 {
     public float overheating;
+    public float cooling;
 
     public GameObject Bullet;
 
@@ -36,7 +37,7 @@ public class MachineGun : MonoBehaviour
                     case true:
                         AmmunitionReloading.enabled = false;
                         AmmunitionReloading.interactable = false;
-                        TotalManagement.Instance.MachineGunFireI = true;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MachineGunSound.enabled = true;
                         MuzzleFlash.gameObject.SetActive(true);
@@ -46,8 +47,12 @@ public class MachineGun : MonoBehaviour
                         MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
                         overheating = 0.0f;
-                        AmmunitionReloading.enabled = true;
-                        AmmunitionReloading.interactable = true;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            AmmunitionReloading.enabled = true;
+                            AmmunitionReloading.interactable = true;
+                        }
                         break;
                 }
                 if (overheating >= 60.0f)
@@ -62,9 +67,9 @@ public class MachineGun : MonoBehaviour
                     case true:
                         AmmunitionReloading.enabled = false;
                         AmmunitionReloading.interactable = false;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MachineGunSound.enabled = true;
-                        TotalManagement.Instance.MachineGunFireII = true;
                         MuzzleFlash.gameObject.SetActive(true);
                         break;
                     case false:
@@ -72,8 +77,12 @@ public class MachineGun : MonoBehaviour
                         MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
                         overheating = 0.0f;
-                        AmmunitionReloading.enabled = true;
-                        AmmunitionReloading.interactable = true;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            AmmunitionReloading.enabled = true;
+                            AmmunitionReloading.interactable = true;
+                        }
                         break;
                 }
                 if (overheating >= 60.0f)
@@ -88,9 +97,9 @@ public class MachineGun : MonoBehaviour
                     case true:
                         AmmunitionReloading.enabled = false;
                         AmmunitionReloading.interactable = false;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MachineGunSound.enabled = true;
-                        TotalManagement.Instance.MachineGunFireIII = true;
                         MuzzleFlash.gameObject.SetActive(true);
                         break;
                     case false:
@@ -98,8 +107,12 @@ public class MachineGun : MonoBehaviour
                         MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
                         overheating = 0.0f;
-                        AmmunitionReloading.enabled = true;
-                        AmmunitionReloading.interactable = true;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            AmmunitionReloading.enabled = true;
+                            AmmunitionReloading.interactable = true;
+                        }
                         break;
                 }
                 if (overheating >= 60.0f)
@@ -114,9 +127,9 @@ public class MachineGun : MonoBehaviour
                     case true:
                         AmmunitionReloading.enabled = false;
                         AmmunitionReloading.interactable = false;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MachineGunSound.enabled = true;
-                        TotalManagement.Instance.MachineGunFireIIII = true;
                         MuzzleFlash.gameObject.SetActive(true);
                         break;
                     case false:
@@ -124,8 +137,12 @@ public class MachineGun : MonoBehaviour
                         MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
                         overheating = 0.0f;
-                        AmmunitionReloading.enabled = true;
-                        AmmunitionReloading.interactable = true;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            AmmunitionReloading.enabled = true;
+                            AmmunitionReloading.interactable = true;
+                        }
                         break;
                 }
                 if (overheating >= 60.0f)
@@ -138,14 +155,28 @@ public class MachineGun : MonoBehaviour
                 switch (TotalManagement.Instance.TriggerV)
                 {
                     case true:
+                        //AmmunitionReloading.enabled = false;
+                        //AmmunitionReloading.interactable = false;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MuzzleFlash.gameObject.SetActive(true);
                         break;
                     case false:
                         StopAllCoroutines();
+                        //MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
-                        overheating = 0.0f;
+                        overheating = 0;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            //AmmunitionReloading.enabled = true;
+                            //AmmunitionReloading.interactable = true;
+                        }
                         break;
+                }
+                if (overheating >= 60.0f)
+                {
+                    TotalManagement.Instance.TriggerV = false;
                 }
                 break;
             case "MG08 6":
@@ -153,14 +184,28 @@ public class MachineGun : MonoBehaviour
                 switch (TotalManagement.Instance.TriggerVI)
                 {
                     case true:
+                        //AmmunitionReloading.enabled = false;
+                        //AmmunitionReloading.interactable = false;
+                        cooling = 0.0f;
                         StartCoroutine(Fire());
                         MuzzleFlash.gameObject.SetActive(true);
                         break;
                     case false:
                         StopAllCoroutines();
+                        //MachineGunSound.enabled = false;
                         MuzzleFlash.gameObject.SetActive(false);
-                        overheating = 0.0f;
+                        overheating = 0;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
+                            //AmmunitionReloading.enabled = true;
+                            //AmmunitionReloading.interactable = true;
+                        }
                         break;
+                }
+                if (overheating >= 60.0f)
+                {
+                    TotalManagement.Instance.TriggerVI = false;
                 }
                 break;
         }

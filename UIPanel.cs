@@ -38,12 +38,59 @@ public class UIPanel : MonoBehaviour
 
         alarm = 0;
 
+        StartCoroutine(MeritCountReport());
         StartCoroutine(AlarmReport());
     }
 
-    void Update()
+    IEnumerator MeritCountReport()
     {
-        MeritCount.text = "X  " + TotalManagement.Instance.Merit;
+        while (true)
+        {
+            MeritCount.text = "X  " + TotalManagement.Instance.Merit;
+
+            yield return null;
+        }
+    }
+
+    IEnumerator AlarmReport()
+    {
+        while (true)
+        {
+            switch (alarm)
+            {
+                case 0:
+                    switch (airship.AirshipDurability)
+                    {
+                        case >= 0.25f:
+                            AlarmI();
+                            break;
+                        case >= 0.20f:
+                            AlarmII();
+                            break;
+                        case >= 0.15f:
+                            AlarmIII();
+                            break;
+                        case <= 0.15f:
+                            AlarmIIII();
+                            break;
+                    }
+                    break;
+                case 1:
+                    Green();
+                    break;
+                case 2:
+                    InsufficientMerit();
+                    break;
+                case 3:
+                    PropellerAlarm();
+                    break;
+                case 4:
+                    FireAlarm();
+                    break;
+            }
+
+            yield return new WaitForSeconds(0.3f);
+        }
     }
 
     void AlarmI()
@@ -326,47 +373,6 @@ public class UIPanel : MonoBehaviour
         else if (TotalManagement.Instance.PropellerI != false && TotalManagement.Instance.PropellerII != false && TotalManagement.Instance.PropellerIII != false && TotalManagement.Instance.PropellerIIII != false)
         {
             alarm = 0;
-        }
-    }
-
-    IEnumerator AlarmReport()
-    {
-        while (true)
-        {
-            switch (alarm)
-            {
-                case 0:
-                    switch (airship.AirshipDurability)
-                    {
-                        case >= 0.25f:
-                            AlarmI();
-                            break;
-                        case >= 0.20f:
-                            AlarmII();
-                            break;
-                        case >= 0.15f:
-                            AlarmIII();
-                            break;
-                        case <= 0.15f:
-                            AlarmIIII();
-                            break;
-                    }
-                    break;
-                case 1:
-                    Green();
-                    break;
-                case 2:
-                    InsufficientMerit();
-                    break;
-                case 3:
-                    PropellerAlarm();
-                    break;
-                case 4:
-                    FireAlarm();
-                    break;
-            }
-
-            yield return new WaitForSeconds(0.3f);
         }
     }
 }

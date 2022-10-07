@@ -14,8 +14,6 @@ public class AirPocket : MonoBehaviour
     Airship airship;
     CameraShake camerashake;
 
-    float Chronometre;
-
     void Start()
     {
         airship = GameObject.Find("Airship").GetComponent<Airship>();
@@ -27,47 +25,9 @@ public class AirPocket : MonoBehaviour
         {
             Smoke.gameObject.SetActive(false);
         }
-    }
 
-    void Update()
-    {
-        switch (TotalManagement.Instance.Camera)
-        {
-            case true:
-                switch (TotalManagement.Instance.Shake)
-                {
-                    case true:
-                        StartCoroutine(camerashake.Shake(0.03f, 0.039f));
-                        break;
-                    case false:
-                        StartCoroutine(camerashake.Shake(0.03f, 0.03f));
-                        break;
-                }
-                break;
-            case false:
-                switch (TotalManagement.Instance.Shake)
-                {
-                    case true:
-                        StopCoroutine(camerashake.Shake(0.03f, 0.039f));
-                        break;
-                    case false:
-                        StopCoroutine(camerashake.Shake(0.03f, 0.03f));
-                        break;
-                }
-                break;
-        }
-
-        if (TotalManagement.Instance.Fire != false)
-        {
-            Chronometre += Time.deltaTime;
-
-            if (Chronometre >= 1.0f)
-            {
-                airship.AirshipDurability -= 0.001f;
-
-                Chronometre = 0.0f;
-            }
-        }
+        StartCoroutine(CameraShakeOperation());
+        StartCoroutine(AirshiponFire());
     }
 
     void OnTriggerEnter(Collider collider)
@@ -105,6 +65,54 @@ public class AirPocket : MonoBehaviour
                     }
                     break;
             }
+        }
+    }
+
+    IEnumerator CameraShakeOperation()
+    {
+        while (true)
+        {
+            switch (TotalManagement.Instance.Camera)
+            {
+                case true:
+                    switch (TotalManagement.Instance.Shake)
+                    {
+                        case true:
+                            StartCoroutine(camerashake.Shake(0.03f, 0.039f));
+                            break;
+                        case false:
+                            StartCoroutine(camerashake.Shake(0.03f, 0.03f));
+                            break;
+                    }
+                    break;
+                case false:
+                    switch (TotalManagement.Instance.Shake)
+                    {
+                        case true:
+                            StopCoroutine(camerashake.Shake(0.03f, 0.039f));
+                            break;
+                        case false:
+                            StopCoroutine(camerashake.Shake(0.03f, 0.03f));
+                            break;
+                    }
+                    break;
+            }
+
+            yield return null;
+        }
+    }
+
+    IEnumerator AirshiponFire()
+    {
+        while (true)
+        {
+            if (TotalManagement.Instance.Fire != false)
+            {
+                airship.AirshipDurability -= 0.001f;
+
+            }
+
+            yield return new WaitForSeconds(1.0f);
         }
     }
 

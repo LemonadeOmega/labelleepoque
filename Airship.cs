@@ -36,7 +36,6 @@ public class Airship : MonoBehaviour
             AirshipDurability = 0.3f;
         }
 
-        //-0.3f
         if (AirshipDurability < -0.3f)
         {
             AirshipDurability = -0.3f;
@@ -72,23 +71,26 @@ public class Airship : MonoBehaviour
 
     IEnumerator AirshipAltitude()
     {
-        Vector3 AirshipOriginalAltitude = this.transform.position;
-        Vector3 AirshipSetAltitude = new Vector3(0.0f, AirshipDurability, 0.0f);
-
-        float present = 0.0f;
-        float future = 0.3f;
-        float elapsedrate = present / future;
-
-        while (elapsedrate < 1.0f)
+        while (TotalManagement.Instance.AirRaid != false)
         {
-            present += Time.deltaTime;
-            elapsedrate = present / future;
+            Vector3 AirshipOriginalAltitude = this.transform.position;
+            Vector3 AirshipSetAltitude = new Vector3(0.0f, AirshipDurability, 0.0f);
 
-            this.transform.position = Vector3.Lerp(AirshipOriginalAltitude, AirshipSetAltitude, elapsedrate);
+            float present = 0.0f;
+            float future = 0.3f;
+            float elapsedrate = present / future;
 
-            AirshipOriginalAltitude = this.transform.position;
+            while (elapsedrate < 1.0f)
+            {
+                present += Time.deltaTime;
+                elapsedrate = present / future;
+
+                this.transform.position = Vector3.Lerp(AirshipOriginalAltitude, AirshipSetAltitude, elapsedrate);
+
+                AirshipOriginalAltitude = this.transform.position;
+            }
+
+            yield return null;
         }
-
-        yield return null;
     }
 }

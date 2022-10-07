@@ -8,30 +8,33 @@ public class MachineGunIndicator : MonoBehaviour
 
     float SinValue;
 
-    void Start()
+    void Awake()
     {
         MachineGunIndicatorAnimationSpeed = 0.001f;
     }
 
-    void Update()
+    void OnEnable()
     {
-        this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1.0f);
-
         StartCoroutine(MachineGunIndicatorAnimation());
     }
 
     IEnumerator MachineGunIndicatorAnimation()
     {
-        float MachineGunIndicator = Mathf.Sin(SinValue);
+        while (true)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1.0f);
 
-        SinValue += 0.1f;
+            float MachineGunIndicator = Mathf.Sin(SinValue);
 
-        Vector3 MGIndicator = this.transform.position;
+            SinValue += 0.1f;
 
-        MGIndicator.y += MachineGunIndicator * MachineGunIndicatorAnimationSpeed;
+            Vector3 MGIndicator = this.transform.position;
 
-        this.transform.position = MGIndicator;
+            MGIndicator.y += MachineGunIndicator * MachineGunIndicatorAnimationSpeed;
 
-        yield return null;
+            this.transform.position = MGIndicator;
+
+            yield return null;
+        }
     }
 }

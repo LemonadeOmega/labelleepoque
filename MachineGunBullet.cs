@@ -11,11 +11,8 @@ public class MachineGunBullet : MonoBehaviour
     void Start()
     {
         BulletRigidbody = GetComponent<Rigidbody>();
-    }
 
-    void Update()
-    {
-        BulletRigidbody.AddForce(this.transform.forward * scala * Time.deltaTime);
+        StartCoroutine(BulletBallistics());
 
         Destroy(this.gameObject, 3.0f);
     }
@@ -25,6 +22,16 @@ public class MachineGunBullet : MonoBehaviour
         if (collider.gameObject.CompareTag("ANTIAIRCRAFT") || collider.gameObject.CompareTag("AASHELL") || collider.gameObject.CompareTag("DELETION"))
         {
             Destroy(this.gameObject);
+        }
+    }
+
+    IEnumerator BulletBallistics()
+    {
+        while (true)
+        {
+            BulletRigidbody.AddForce(this.transform.forward * scala * Time.deltaTime);
+
+            yield return null;
         }
     }
 }

@@ -8,10 +8,27 @@ public class GreySky : MonoBehaviour
 
     public float FlowSpeed = 0;
 
-    void Update()
+    void Start()
     {
-        Vector2 direction = Vector2.left;
+        StartCoroutine(SilverSky());
+    }
 
-        BackgroundMaterial.mainTextureOffset += direction * FlowSpeed * Time.deltaTime;
+    //void Update()
+    //{
+    //    Vector2 direction = Vector2.left;
+
+    //    BackgroundMaterial.mainTextureOffset += direction * FlowSpeed * Time.deltaTime;
+    //}
+
+    IEnumerator SilverSky()
+    {
+        while (true)
+        {
+            Vector2 direction = Vector2.left;
+
+            BackgroundMaterial.mainTextureOffset += direction * FlowSpeed * Time.deltaTime;
+
+            yield return null;
+        }
     }
 }

@@ -79,7 +79,6 @@ public class TotalManagement : MonoBehaviour
         TotalManagement.Instance.Battery = 0;
         TotalManagement.Instance.Level = 0;
 
-        TotalManagement.Instance.AirRaid = false;
         TotalManagement.Instance.Camera = false;
         TotalManagement.Instance.TriggerI = false;
         TotalManagement.Instance.TriggerII = false;
@@ -116,83 +115,97 @@ public class TotalManagement : MonoBehaviour
         AntiAircraftBattery = 6;
 
         AADeploymentChronometre = 2.7f;
+
+        TotalManagement.Instance.AirRaid = true;
+
+        StartCoroutine(Clock());
+        StartCoroutine(Operation());
     }
 
-    void Update()
+    IEnumerator Clock()
     {
-        Debug.Log(TotalManagement.Instance.Battery);
-
-        Clock();
-
-        if (ElapsedSecond >= 300.0f)
+        while (true)
         {
-            LondonOnFireI.gameObject.SetActive(true);
-            LondonOnFireII.gameObject.SetActive(true);
+            TimeSpan now = DateTime.Now.TimeOfDay;
 
-            AntiAircraftBattery = 12;
+            RealTimeHour.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalHours * HourHandDegree);
+            RealTimeMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalMinutes * MinuteHandDegree);
+            RealTimeSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalSeconds * SecondHandDegree);
 
-            TotalManagement.Instance.Level = 1;
-        }
-        
-        if (ElapsedSecond >= 600.0f)
-        {
-            LondonOnFireIII.gameObject.SetActive(true);
-            LondonOnFireIIII.gameObject.SetActive(true);
+            ElapsedSecond += Time.deltaTime;
 
-            AntiAircraftBattery = 18;
+            TimeSpan Elapsedtime = TimeSpan.FromSeconds(ElapsedSecond);
 
-            TotalManagement.Instance.Level = 2;
-        }
-        
-        if (ElapsedSecond >= 900.0f)
-        {
-            LondonOnFireV.gameObject.SetActive(true);
-            LondonOnFireVI.gameObject.SetActive(true);
-            LondonOnFireVII.gameObject.SetActive(true);
-            LondonOnFireVIII.gameObject.SetActive(true);
+            ChronometreMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalMinutes * MinuteHandChronometreDegree);
+            ChronometreSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalSeconds * SecondHandDegree);
 
-            AADeploymentChronometre = 1.8f;
-        }
-        
-        if (ElapsedSecond >= 1200.0f)
-        {
-            LondonOnFireIX.gameObject.SetActive(true);
-            LondonOnFireX.gameObject.SetActive(true);
-            LondonOnFireXI.gameObject.SetActive(true);
-            LondonOnFireXII.gameObject.SetActive(true);
+            if (ElapsedSecond >= 300.0f)
+            {
+                LondonOnFireI.gameObject.SetActive(true);
+                LondonOnFireII.gameObject.SetActive(true);
 
-            AADeploymentChronometre = 0.9f;
-        }
+                AntiAircraftBattery = 12;
 
-        if (TotalManagement.Instance.Battery < 0)
-        {
-            TotalManagement.Instance.Battery = 0;
-        }
+                TotalManagement.Instance.Level = 1;
+            }
 
-        if (TotalManagement.Instance.Battery != AntiAircraftBattery)
-        {
-            StartCoroutine(AntiAircraftDeployment());
-        }
-        else if (TotalManagement.Instance.Battery == AntiAircraftBattery)
-        {
-            StopCoroutine(AntiAircraftDeployment());
+            if (ElapsedSecond >= 600.0f)
+            {
+                LondonOnFireIII.gameObject.SetActive(true);
+                LondonOnFireIIII.gameObject.SetActive(true);
+
+                AntiAircraftBattery = 18;
+
+                TotalManagement.Instance.Level = 2;
+            }
+
+            if (ElapsedSecond >= 900.0f)
+            {
+                LondonOnFireV.gameObject.SetActive(true);
+                LondonOnFireVI.gameObject.SetActive(true);
+                LondonOnFireVII.gameObject.SetActive(true);
+                LondonOnFireVIII.gameObject.SetActive(true);
+
+                AADeploymentChronometre = 1.8f;
+            }
+
+            if (ElapsedSecond >= 1200.0f)
+            {
+                LondonOnFireIX.gameObject.SetActive(true);
+                LondonOnFireX.gameObject.SetActive(true);
+                LondonOnFireXI.gameObject.SetActive(true);
+                LondonOnFireXII.gameObject.SetActive(true);
+
+                AADeploymentChronometre = 0.9f;
+            }
+
+            yield return null;
         }
     }
 
-    void Clock()
+    IEnumerator Operation()
     {
-        TimeSpan now = DateTime.Now.TimeOfDay;
+        while (TotalManagement.Instance.AirRaid != false)
+        {
+            if (TotalManagement.Instance.Battery < 0)
+            {
+                TotalManagement.Instance.Battery = 0;
+            }
 
-        RealTimeHour.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalHours * HourHandDegree);
-        RealTimeMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalMinutes * MinuteHandDegree);
-        RealTimeSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalSeconds * SecondHandDegree);
+            if (TotalManagement.Instance.Battery != AntiAircraftBattery)
+            {
+                StartCoroutine(AntiAircraftDeployment());
+            }
 
-        ElapsedSecond += Time.deltaTime;
+            else if (TotalManagement.Instance.Battery == AntiAircraftBattery)
+            {
+                StopCoroutine(AntiAircraftDeployment());
+            }
 
-        TimeSpan Elapsedtime = TimeSpan.FromSeconds(ElapsedSecond);
+            Debug.Log(TotalManagement.Instance.Battery);
 
-        ChronometreMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalMinutes * MinuteHandChronometreDegree);
-        ChronometreSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalSeconds * SecondHandDegree);
+            yield return null;
+        }
     }
 
     IEnumerator AntiAircraftDeployment()
@@ -470,86 +483,6 @@ public class TotalManagement : MonoBehaviour
         set
         {
             PlayerPrefs.SetString("TriggerVI", value.ToString());
-        }
-    }
-
-    public bool MachineGunFireI
-    {
-        get
-        {
-            if (!PlayerPrefs.HasKey("MachineGunFireI"))
-            {
-                return false;
-            }
-
-            string temporarymachinegunfirei = PlayerPrefs.GetString("MachineGunFireI");
-
-            return bool.Parse(temporarymachinegunfirei);
-        }
-
-        set
-        {
-            PlayerPrefs.SetString("MachineGunFireI", value.ToString());
-        }
-    }
-
-    public bool MachineGunFireII
-    {
-        get
-        {
-            if (!PlayerPrefs.HasKey("MachineGunFireII"))
-            {
-                return false;
-            }
-
-            string temporarymachinegunfireii = PlayerPrefs.GetString("MachineGunFireII");
-
-            return bool.Parse(temporarymachinegunfireii);
-        }
-
-        set
-        {
-            PlayerPrefs.SetString("MachineGunFireII", value.ToString());
-        }
-    }
-
-    public bool MachineGunFireIII
-    {
-        get
-        {
-            if (!PlayerPrefs.HasKey("MachineGunFireIII"))
-            {
-                return false;
-            }
-
-            string temporarymachinegunfireiii = PlayerPrefs.GetString("MachineGunFireIII");
-
-            return bool.Parse(temporarymachinegunfireiii);
-        }
-
-        set
-        {
-            PlayerPrefs.SetString("MachineGunFireIII", value.ToString());
-        }
-    }
-
-    public bool MachineGunFireIIII
-    {
-        get
-        {
-            if (!PlayerPrefs.HasKey("MachineGunFireIIII"))
-            {
-                return false;
-            }
-
-            string temporarymachinegunfireiiii = PlayerPrefs.GetString("MachineGunFireIIII");
-
-            return bool.Parse(temporarymachinegunfireiiii);
-        }
-
-        set
-        {
-            PlayerPrefs.SetString("MachineGunFireIIII", value.ToString());
         }
     }
 
