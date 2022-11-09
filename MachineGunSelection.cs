@@ -24,6 +24,8 @@ public class MachineGunSelection : MonoBehaviour
     public GameObject MachineGunSelectionIndicatorV;
     public GameObject MachineGunSelectionIndicatorIV;
 
+    public Button MachineGunController;
+
     public float ImageAlphaValue = 0.1f;
 
     You you;
@@ -46,6 +48,26 @@ public class MachineGunSelection : MonoBehaviour
         MachineGunSelectionIndicatorIIII.gameObject.SetActive(false);
         MachineGunSelectionIndicatorV.gameObject.SetActive(false);
         MachineGunSelectionIndicatorIV.gameObject.SetActive(false);
+
+        StartCoroutine(MachineGunControllerChrono());
+    }
+
+    IEnumerator MachineGunControllerChrono()
+    {
+        while (true)
+        {
+            switch (TotalManagement.Instance.PresentChronoState)
+            {
+                case O.One:
+                    MachineGunController.enabled = true;
+                    break;
+                case O.Nought:
+                    MachineGunController.enabled = false;
+                    break;
+            }
+
+            yield return null;
+        }
     }
 
     public void MachineGunSelectionI()

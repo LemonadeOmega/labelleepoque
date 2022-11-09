@@ -24,8 +24,19 @@ public class AirBombInteraction : MonoBehaviour
         ChainExplosion = false;
 
         ChainExplosionOrder = 0;
+    }
 
-        StartCoroutine(AirBombExplosion());
+    void Update()
+    {
+        switch (this.gameObject.name)
+        {
+            case "Front Gondola Air Bomb Interaction":
+                AirBombExplosionOperationI();
+                break;
+            case "Rear Gondola Air Bomb Interaction":
+                AirBombExplosionOperationII();
+                break;
+        }
     }
 
     void OnTriggerEnter(Collider collider)
@@ -107,24 +118,6 @@ public class AirBombInteraction : MonoBehaviour
             }
 
             ChainExplosion = true;
-        }
-    }
-
-    IEnumerator AirBombExplosion()
-    {
-        while (true)
-        {
-            switch (this.gameObject.name)
-            {
-                case "Front Gondola Air Bomb Interaction":
-                    AirBombExplosionOperationI();
-                    break;
-                case "Rear Gondola Air Bomb Interaction":
-                    AirBombExplosionOperationII();
-                    break;
-            }
-
-            yield return null;
         }
     }
 

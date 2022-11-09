@@ -31,9 +31,26 @@ public class TotalManagement : MonoBehaviour
 
     public float ElapsedSecond;
 
+    public O PresentChronoState { get; private set; }
+
+    public delegate void GameStateChangeHandler(O o);
+
+    public event GameStateChangeHandler ChronoState;
+
+    public void SetChronoState(O o)
+    {
+        if (o == PresentChronoState)
+        {
+            return;
+        }
+
+        PresentChronoState = o;
+        ChronoState?.Invoke(o);
+    }
+
     BoxCollider Deployment;
 
-    AudioSource SirenSound;
+    AudioSource SirenSoundControl;
 
     Vector3 AADeployment()
     {
@@ -56,10 +73,15 @@ public class TotalManagement : MonoBehaviour
     float MinuteHandChronometreDegree = 12.0f;
     float SecondHandDegree = 6.0f;
     float Chronometre;
+    float SirenChronometre;
     float AADeploymentChronometre;
+
+    bool Silence;
 
     void Awake()
     {
+        Application.targetFrameRate = 30;
+
         if (Instance == null)
         {
             Instance = this;
@@ -79,6 +101,7 @@ public class TotalManagement : MonoBehaviour
         TotalManagement.Instance.Battery = 0;
         TotalManagement.Instance.Level = 0;
 
+        TotalManagement.Instance.AirRaid = false;
         TotalManagement.Instance.Camera = false;
         TotalManagement.Instance.TriggerI = false;
         TotalManagement.Instance.TriggerII = false;
@@ -109,17 +132,78 @@ public class TotalManagement : MonoBehaviour
         Deployment = GetComponent<BoxCollider>();
         Deployment.enabled = false;
 
-        SirenSound = GetComponent<AudioSource>();
-        SirenSound.PlayOneShot(SirenSoundEffect);
+        SirenSoundControl = GetComponent<AudioSource>();
 
         AntiAircraftBattery = 6;
 
-        AADeploymentChronometre = 2.7f;
+        AADeploymentChronometre = 3.0f;
 
-        TotalManagement.Instance.AirRaid = true;
+        Silence = true;
 
+        TotalManagement.Instance.ChronoState += Chrono;
+
+        //StartCoroutine(Siren());
         StartCoroutine(Clock());
-        StartCoroutine(Operation());
+        StartCoroutine(LaBelleEpoqueSystem());
+    }
+
+    void OnDestroy()
+    {
+        TotalManagement.Instance.ChronoState -= Chrono;
+    }
+
+    IEnumerator LaBelleEpoqueSystem()
+    {
+        while (true)
+        {
+            switch (TotalManagement.Instance.PresentChronoState)
+            {
+                case O.One:
+                    StartCoroutine(Chronograph());
+                    StartCoroutine(AirDefenseSystem());
+                    break;
+                case O.Nought:
+                    StopCoroutine(Chronograph());
+                    StopCoroutine(AirDefenseSystem());
+                    break;
+            }
+
+            yield return null;
+        }
+    }
+
+    IEnumerator Siren()
+    {
+        while (true)
+        {
+            switch(TotalManagement.Instance.PresentChronoState)
+            {
+                case O.One:
+                    SirenChronometre += Time.deltaTime;
+                    if (Silence != true)
+                    {
+                        SirenSoundControl.UnPause();
+
+                        Silence = true;
+                    }
+                    if (SirenSoundControl.isPlaying != true)
+                    {
+                        SirenSoundControl.PlayOneShot(SirenSoundEffect);
+                    }
+                    break;
+                case O.Nought:
+                    SirenSoundControl.Pause();
+                    Silence = false;
+                    break;
+            }
+
+            if (SirenChronometre >= 4.0f)
+            {
+                break;
+            }
+
+            yield return null;
+        }
     }
 
     IEnumerator Clock()
@@ -132,60 +216,70 @@ public class TotalManagement : MonoBehaviour
             RealTimeMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalMinutes * MinuteHandDegree);
             RealTimeSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)now.TotalSeconds * SecondHandDegree);
 
-            ElapsedSecond += Time.deltaTime;
-
-            TimeSpan Elapsedtime = TimeSpan.FromSeconds(ElapsedSecond);
-
-            ChronometreMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalMinutes * MinuteHandChronometreDegree);
-            ChronometreSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalSeconds * SecondHandDegree);
-
-            if (ElapsedSecond >= 300.0f)
-            {
-                LondonOnFireI.gameObject.SetActive(true);
-                LondonOnFireII.gameObject.SetActive(true);
-
-                AntiAircraftBattery = 12;
-
-                TotalManagement.Instance.Level = 1;
-            }
-
-            if (ElapsedSecond >= 600.0f)
-            {
-                LondonOnFireIII.gameObject.SetActive(true);
-                LondonOnFireIIII.gameObject.SetActive(true);
-
-                AntiAircraftBattery = 18;
-
-                TotalManagement.Instance.Level = 2;
-            }
-
-            if (ElapsedSecond >= 900.0f)
-            {
-                LondonOnFireV.gameObject.SetActive(true);
-                LondonOnFireVI.gameObject.SetActive(true);
-                LondonOnFireVII.gameObject.SetActive(true);
-                LondonOnFireVIII.gameObject.SetActive(true);
-
-                AADeploymentChronometre = 1.8f;
-            }
-
-            if (ElapsedSecond >= 1200.0f)
-            {
-                LondonOnFireIX.gameObject.SetActive(true);
-                LondonOnFireX.gameObject.SetActive(true);
-                LondonOnFireXI.gameObject.SetActive(true);
-                LondonOnFireXII.gameObject.SetActive(true);
-
-                AADeploymentChronometre = 0.9f;
-            }
-
             yield return null;
         }
     }
 
-    IEnumerator Operation()
+    IEnumerator Chronograph()
     {
-        while (TotalManagement.Instance.AirRaid != false)
+        ElapsedSecond += Time.deltaTime;
+
+        TimeSpan Elapsedtime = TimeSpan.FromSeconds(ElapsedSecond);
+
+        ChronometreMinute.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalMinutes * MinuteHandChronometreDegree);
+        ChronometreSecond.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, (float)Elapsedtime.TotalSeconds * SecondHandDegree);
+
+        if (ElapsedSecond >= 300.0f)
+        {
+            LondonOnFireI.gameObject.SetActive(true);
+            LondonOnFireII.gameObject.SetActive(true);
+
+            AntiAircraftBattery = 12;
+
+            TotalManagement.Instance.Level = 1;
+        }
+
+        if (ElapsedSecond >= 600.0f)
+        {
+            LondonOnFireIII.gameObject.SetActive(true);
+            LondonOnFireIIII.gameObject.SetActive(true);
+
+            AntiAircraftBattery = 18;
+
+            TotalManagement.Instance.Level = 2;
+        }
+
+        if (ElapsedSecond >= 900.0f)
+        {
+            LondonOnFireV.gameObject.SetActive(true);
+            LondonOnFireVI.gameObject.SetActive(true);
+            LondonOnFireVII.gameObject.SetActive(true);
+            LondonOnFireVIII.gameObject.SetActive(true);
+
+            AADeploymentChronometre = 0.6f;
+        }
+
+        if (ElapsedSecond >= 1200.0f)
+        {
+            LondonOnFireIX.gameObject.SetActive(true);
+            LondonOnFireX.gameObject.SetActive(true);
+            LondonOnFireXI.gameObject.SetActive(true);
+            LondonOnFireXII.gameObject.SetActive(true);
+
+            AADeploymentChronometre = 0.3f;
+        }
+
+        if (ElapsedSecond >= 1500.0f)
+        {
+            TotalManagement.Instance.AirRaid = true;
+        }
+
+        yield return null;
+    }
+
+    IEnumerator AirDefenseSystem()
+    {
+        if (TotalManagement.Instance.AirRaid != true)
         {
             if (TotalManagement.Instance.Battery < 0)
             {
@@ -224,6 +318,12 @@ public class TotalManagement : MonoBehaviour
 
             yield return null;
         }
+        
+    }
+
+    void Chrono(O o)
+    {
+        enabled = o == O.One;
     }
 
     public int Merit

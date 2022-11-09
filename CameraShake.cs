@@ -25,7 +25,7 @@ public class CameraShake : MonoBehaviour
 
             camera.transform.localPosition = Random.insideUnitSphere * magnitude + OriginalCameraPosition;
 
-            yield return null;
+            yield return new WaitForSeconds(0.02f);
         }
 
         camera.transform.localPosition = OriginalCameraPosition;

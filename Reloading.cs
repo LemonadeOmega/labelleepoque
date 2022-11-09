@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Reloading : MonoBehaviour
 {
+    public Button AmmunitionController;
+
     public float ImageAlphaValue = 0.1f;
 
     CursorVisualEffect cursorvisualeffect;
@@ -14,6 +16,52 @@ public class Reloading : MonoBehaviour
         cursorvisualeffect = GameObject.Find("You").GetComponent<CursorVisualEffect>();
 
         this.GetComponent<Image>().alphaHitTestMinimumThreshold = ImageAlphaValue;
+
+        StartCoroutine(AmmunitionControllerChrono());
+    }
+
+    IEnumerator AmmunitionControllerChrono()
+    {
+        while (true)
+        {
+            switch (TotalManagement.Instance.PresentChronoState)
+            {
+                case O.One:
+                    switch (this.gameObject.name)
+                    {
+                        case "Reloading 1":
+                            if (TotalManagement.Instance.TriggerI != true)
+                            {
+                                AmmunitionController.enabled = true;
+                            }
+                            break;
+                        case "Reloading 2":
+                            if (TotalManagement.Instance.TriggerII != true)
+                            {
+                                AmmunitionController.enabled = true;
+                            }
+                            break;
+                        case "Reloading 3":
+                            if (TotalManagement.Instance.TriggerIII != true)
+                            {
+                                AmmunitionController.enabled = true;
+                            }
+                            break;
+                        case "Reloading 4":
+                            if (TotalManagement.Instance.TriggerIIII != true)
+                            {
+                                AmmunitionController.enabled = true;
+                            }
+                            break;
+                    }
+                    break;
+                case O.Nought:
+                    AmmunitionController.enabled = false;
+                    break;
+            }
+
+            yield return null;
+        }
     }
 
     public void MachineGunReloadingI()

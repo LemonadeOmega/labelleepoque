@@ -9,19 +9,22 @@ public class SceneFadeIn : MonoBehaviour
 
     float ElapsedRate;
 
-    void Update()
+    void Start()
     {
         LobbyFadeIn();
     }
 
     void LobbyFadeIn()
     {
-        ElapsedRate += Time.deltaTime / 2.0f;
+        while (ElapsedRate < 1.0f)
+        {
+            ElapsedRate += Time.deltaTime / 2.0f;
 
-        Color Colour = LobbyFadeInImage.color;
+            Color Colour = LobbyFadeInImage.color;
 
-        Colour.a = Mathf.Lerp(1.0f, 0.0f, ElapsedRate);
+            Colour.a = Mathf.Lerp(1.0f, 0.0f, ElapsedRate);
 
-        LobbyFadeInImage.color = Colour;
+            LobbyFadeInImage.color = Colour;
+        }
     }
 }

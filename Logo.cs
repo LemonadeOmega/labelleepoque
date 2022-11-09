@@ -11,18 +11,21 @@ public class Logo : MonoBehaviour
     float Chronometre;
     float ElapsedRate;
 
-    void Update()
+    void Start()
     {
-        Chronometre += Time.deltaTime;
-
-        if (Chronometre >= 2.0f)
+        while (Chronometre <= 4.0f)
         {
-            LogoFadeOut();
-        }
+            Chronometre += Time.deltaTime;
 
-        if (Chronometre >= 4.0f)
-        {
-            SceneManager.LoadScene(1);
+            if (Chronometre >= 2.0f)
+            {
+                LogoFadeOut();
+            }
+
+            if (Chronometre >= 4.0f)
+            {
+                SceneManager.LoadScene(1);
+            }
         }
     }
 

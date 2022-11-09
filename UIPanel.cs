@@ -48,7 +48,7 @@ public class UIPanel : MonoBehaviour
         {
             MeritCount.text = "X  " + TotalManagement.Instance.Merit;
 
-            yield return null;
+            yield return new WaitForSeconds(0.02f);
         }
     }
 

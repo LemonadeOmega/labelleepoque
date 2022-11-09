@@ -14,6 +14,8 @@ public class AirPocket : MonoBehaviour
     Airship airship;
     CameraShake camerashake;
 
+    float Chronometre;
+
     void Start()
     {
         airship = GameObject.Find("Airship").GetComponent<Airship>();
@@ -25,9 +27,19 @@ public class AirPocket : MonoBehaviour
         {
             Smoke.gameObject.SetActive(false);
         }
+    }
 
-        StartCoroutine(CameraShakeOperation());
-        StartCoroutine(AirshiponFire());
+    void Update()
+    {
+        StartCoroutine(AirshipFall());
+
+        if (this.gameObject.name == "HYDROGEN")
+        {
+            if (TotalManagement.Instance.Camera != false && TotalManagement.Instance.Shake != false)
+            {
+                StartCoroutine(camerashake.Shake(0.03f, 0.039f));
+            }
+        }
     }
 
     void OnTriggerEnter(Collider collider)
@@ -47,6 +59,7 @@ public class AirPocket : MonoBehaviour
                     this.gameObject.SetActive(false);
                     break;
                 case "HYDROGEN":
+                    Debug.Log("HYDROGEN");
                     TotalManagement.Instance.Camera = true;
                     TotalManagement.Instance.Shake = true;
                     Instantiate(ExplosionEffect, this.transform.position, Quaternion.identity);
@@ -68,96 +81,20 @@ public class AirPocket : MonoBehaviour
         }
     }
 
-    IEnumerator CameraShakeOperation()
+    IEnumerator AirshipFall()
     {
-        while (true)
+        if (TotalManagement.Instance.Fire != false)
         {
-            switch (TotalManagement.Instance.Camera)
-            {
-                case true:
-                    switch (TotalManagement.Instance.Shake)
-                    {
-                        case true:
-                            StartCoroutine(camerashake.Shake(0.03f, 0.039f));
-                            break;
-                        case false:
-                            StartCoroutine(camerashake.Shake(0.03f, 0.03f));
-                            break;
-                    }
-                    break;
-                case false:
-                    switch (TotalManagement.Instance.Shake)
-                    {
-                        case true:
-                            StopCoroutine(camerashake.Shake(0.03f, 0.039f));
-                            break;
-                        case false:
-                            StopCoroutine(camerashake.Shake(0.03f, 0.03f));
-                            break;
-                    }
-                    break;
-            }
+            Chronometre += Time.deltaTime;
 
-            yield return null;
-        }
-    }
-
-    IEnumerator AirshiponFire()
-    {
-        while (true)
-        {
-            if (TotalManagement.Instance.Fire != false)
+            if (Chronometre >= 1.0f)
             {
                 airship.AirshipDurability -= 0.001f;
 
+                Chronometre = 0.0f;
+
+                yield return null;
             }
-
-            yield return new WaitForSeconds(1.0f);
-        }
-    }
-
-    void Smoke()
-    {
-        DamagedAirPocket = Random.Range(0, 4);
-
-        switch (DamagedAirPocket)
-        {
-            case 0:
-                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 1; AirPocketSmokeCount++)
-                {
-                    int AirPocketSmoke = Random.Range(0, 58);
-
-                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
-                    airship.Smokes[AirPocketSmoke].Play();
-                }
-                break;
-            case 1:
-                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 2; AirPocketSmokeCount++)
-                {
-                    int AirPocketSmoke = Random.Range(0, 58);
-
-                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
-                    airship.Smokes[AirPocketSmoke].Play();
-                }
-                break;
-            case 2:
-                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 3; AirPocketSmokeCount++)
-                {
-                    int AirPocketSmoke = Random.Range(0, 58);
-
-                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
-                    airship.Smokes[AirPocketSmoke].Play();
-                }
-                break;
-            case 3:
-                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 4; AirPocketSmokeCount++)
-                {
-                    int AirPocketSmoke = Random.Range(0, 58);
-
-                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
-                    airship.Smokes[AirPocketSmoke].Play();
-                }
-                break;
         }
     }
 
@@ -207,6 +144,51 @@ public class AirPocket : MonoBehaviour
             }
         }
 
-        yield return null;
+        yield return new WaitForSeconds(0.02f);
+    }
+
+    void Smoke()
+    {
+        DamagedAirPocket = Random.Range(0, 4);
+
+        switch (DamagedAirPocket)
+        {
+            case 0:
+                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 1; AirPocketSmokeCount++)
+                {
+                    int AirPocketSmoke = Random.Range(0, 58);
+
+                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
+                    airship.Smokes[AirPocketSmoke].Play();
+                }
+                break;
+            case 1:
+                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 2; AirPocketSmokeCount++)
+                {
+                    int AirPocketSmoke = Random.Range(0, 58);
+
+                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
+                    airship.Smokes[AirPocketSmoke].Play();
+                }
+                break;
+            case 2:
+                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 3; AirPocketSmokeCount++)
+                {
+                    int AirPocketSmoke = Random.Range(0, 58);
+
+                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
+                    airship.Smokes[AirPocketSmoke].Play();
+                }
+                break;
+            case 3:
+                for (int AirPocketSmokeCount = 0; AirPocketSmokeCount < 4; AirPocketSmokeCount++)
+                {
+                    int AirPocketSmoke = Random.Range(0, 58);
+
+                    airship.Smokes[AirPocketSmoke].gameObject.SetActive(true);
+                    airship.Smokes[AirPocketSmoke].Play();
+                }
+                break;
+        }
     }
 }

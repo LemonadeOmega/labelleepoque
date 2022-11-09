@@ -6,7 +6,7 @@ public class AA : MonoBehaviour
 {
     AntiAircraft antiaircraft;
 
-    void Awake()
+    void Start()
     {
         antiaircraft = GetComponentInParent<AntiAircraft>();
     }

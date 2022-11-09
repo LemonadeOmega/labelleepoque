@@ -28,7 +28,10 @@ public class CursorVisualEffect : MonoBehaviour
         GearRotationSpeed = 60.0f;
 
         Operation = false;
+    }
 
+    void Update()
+    {
         StartCoroutine(CursorEffectVisualiation());
         StartCoroutine(GearRotationEffect());
         StartCoroutine(GearEffectVisualisation());
@@ -36,45 +39,37 @@ public class CursorVisualEffect : MonoBehaviour
 
     IEnumerator CursorEffectVisualiation()
     {
-        while (true)
-        {
-            Cursor.visible = false;
+        Cursor.visible = false;
 
-            CursorVisualisationEffect.transform.position = Input.mousePosition;
+        CursorVisualisationEffect.transform.position = Input.mousePosition;
 
-            yield return null;
-        }
+        yield return new WaitForSeconds(0.02f);
     }
 
     IEnumerator GearRotationEffect()
     {
-        while (true)
-        {
-            GearI.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f) * GearRotationSpeed * Time.deltaTime);
-            GearII.transform.Rotate(new Vector3(0.0f, 0.0f, -1.0f) * GearRotationSpeed * Time.deltaTime);
+        GearI.transform.Rotate(new Vector3(0.0f, 0.0f, 1.0f) * GearRotationSpeed * Time.deltaTime);
+        GearII.transform.Rotate(new Vector3(0.0f, 0.0f, -1.0f) * GearRotationSpeed * Time.deltaTime);
 
-            yield return null;
-        }
+        yield return new WaitForSeconds(0.02f);
     }
 
     IEnumerator GearEffectVisualisation()
     {
-        while (true)
-        {
-            switch (Operation)
-            {
-                case true:
-                    GearI.gameObject.SetActive(true);
-                    GearII.gameObject.SetActive(true);
-                    break;
-                case false:
-                    GearI.gameObject.SetActive(false);
-                    GearII.gameObject.SetActive(false);
-                    break;
-            }
 
-            yield return null;
+        switch (Operation)
+        {
+            case true:
+                GearI.gameObject.SetActive(true);
+                GearII.gameObject.SetActive(true);
+                break;
+            case false:
+                GearI.gameObject.SetActive(false);
+                GearII.gameObject.SetActive(false);
+                break;
         }
+
+        yield return new WaitForSeconds(0.02f);
     }
 
     public void InteractionI()

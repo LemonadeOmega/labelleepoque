@@ -103,6 +103,6 @@ public class Propeller : MonoBehaviour
     {
         this.transform.Rotate(new Vector3(90.0f, 0.0f, 0.0f) * RotationSpeed * Time.deltaTime);
 
-        yield return null;
+        yield return new WaitForSeconds(0.02f);
     }
 }

@@ -8,13 +8,31 @@ public class MachineGunBullet : MonoBehaviour
 
     Rigidbody BulletRigidbody;
 
+    float Chronometre;
+
     void Start()
     {
         BulletRigidbody = GetComponent<Rigidbody>();
 
-        StartCoroutine(BulletBallistics());
+        TotalManagement.Instance.ChronoState += Chrono;
+    }
 
-        Destroy(this.gameObject, 3.0f);
+    void Update()
+    {
+        switch (TotalManagement.Instance.PresentChronoState)
+        {
+            case O.One:
+                StartCoroutine(MachineGunBulletAttribute());
+                break;
+            case O.Nought:
+                StopAllCoroutines();
+                break;
+        }
+    }
+
+    void OnDestroy()
+    {
+        TotalManagement.Instance.ChronoState -= Chrono;
     }
 
     void OnTriggerEnter(Collider collider)
@@ -25,13 +43,22 @@ public class MachineGunBullet : MonoBehaviour
         }
     }
 
-    IEnumerator BulletBallistics()
+    IEnumerator MachineGunBulletAttribute()
     {
-        while (true)
-        {
-            BulletRigidbody.AddForce(this.transform.forward * scala * Time.deltaTime);
+        Chronometre += Time.deltaTime;
 
-            yield return null;
+        BulletRigidbody.AddForce(this.transform.forward * scala * Time.deltaTime);
+
+        if (Chronometre >= 3.0f)
+        {
+            Destroy(this.gameObject);
         }
+
+        yield return null;
+    }
+
+    void Chrono(O o)
+    {
+        enabled = o == O.One;
     }
 }

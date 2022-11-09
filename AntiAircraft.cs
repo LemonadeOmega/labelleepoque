@@ -25,8 +25,10 @@ public class AntiAircraft : MonoBehaviour
     AudioSource AASound;
 
     float Chronometre;
+    float Chronogragh;
 
-    bool Operation;
+    bool FlameChrono;
+    bool Count;
 
     public enum AntiAircraftState
     {
@@ -42,7 +44,12 @@ public class AntiAircraft : MonoBehaviour
         AAFlame.gameObject.SetActive(false);
         AANeutralisedFlame.gameObject.SetActive(false);
 
+        AASound = GetComponent<AudioSource>();
+
         AADurability = 25;
+
+        FlameChrono = true;
+        Count = true;
 
         switch (TotalManagement.Instance.Level)
         {
@@ -168,14 +175,15 @@ public class AntiAircraft : MonoBehaviour
                 break;
         }
 
-        AASound = GetComponent<AudioSource>();
+        //TotalManagement.Instance.ChronoState += Chrono;
 
-        Operation = true;
-
-        StartCoroutine(AAStateVerification());
-        StartCoroutine(AAinOperation());
-        StartCoroutine(Ray());
+        StartCoroutine(AntiAircraftChronoSystem());
     }
+
+    //void OnDestroy()
+    //{
+    //    TotalManagement.Instance.ChronoState -= Chrono;
+    //}
 
     void OnTriggerEnter(Collider collider)
     {
@@ -185,11 +193,35 @@ public class AntiAircraft : MonoBehaviour
         }
     }
 
-    IEnumerator Ray()
+    IEnumerator AntiAircraftChronoSystem()
     {
         while (true)
         {
             Debug.DrawRay(AAFire.transform.position, AAFire.right * 1.5f, Color.red);
+
+            switch (TotalManagement.Instance.PresentChronoState)
+            {
+                case O.One:
+                    StartCoroutine(AAStateVerification());
+                    StartCoroutine(AAinOperation());
+                    AASound.UnPause();
+                    if (FlameChrono != true)
+                    {
+                        AAFlame.Play();
+                        AANeutralisedFlame.Play();
+
+                        FlameChrono = true;
+                    }
+                    break;
+                case O.Nought:
+                    StopCoroutine(AAStateVerification());
+                    StopCoroutine(AAinOperation());
+                    AASound.Pause();
+                    AAFlame.Pause();
+                    AANeutralisedFlame.Pause();
+                    FlameChrono = false;
+                    break;
+            }
 
             yield return null;
         }
@@ -197,114 +229,109 @@ public class AntiAircraft : MonoBehaviour
 
     IEnumerator AAStateVerification()
     {
-        while (Operation != false)
+        switch (AADurability)
         {
-            switch (AADurability)
-            {
-                case > 0:
-                    switch (this.gameObject.name)
-                    {
-                        case "AA 1":
-                            if (TotalManagement.Instance.AAI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 2":
-                            if (TotalManagement.Instance.AAII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 3":
-                            if (TotalManagement.Instance.AAIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 4":
-                            if (TotalManagement.Instance.AAIIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 5":
-                            if (TotalManagement.Instance.AAV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 6":
-                            if (TotalManagement.Instance.AAVI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 7":
-                            if (TotalManagement.Instance.AAVII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 8":
-                            if (TotalManagement.Instance.AAVIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 9":
-                            if (TotalManagement.Instance.AAIX != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 10":
-                            if (TotalManagement.Instance.AAX != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 11":
-                            if (TotalManagement.Instance.AAXI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 12":
-                            if (TotalManagement.Instance.AAXII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 13":
-                            if (TotalManagement.Instance.AAXIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 14":
-                            if (TotalManagement.Instance.AAXIV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 15":
-                            if (TotalManagement.Instance.AAXV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 16":
-                            if (TotalManagement.Instance.AAXVI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 17":
-                            if (TotalManagement.Instance.AAXVII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                        case "AA 18":
-                            if (TotalManagement.Instance.AAXVIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
-                            break;
-                    }
-                    break;
-                case <= 0:
-                    AADurability = 0;
-                    AAState = AntiAircraftState.NEUTRALISED;
-                    break;
-            }
-
-            if (AAState == AntiAircraftState.NEUTRALISED)
-            {
-                yield break;
-            }
-
-            yield return new WaitForSeconds(1.0f);
+            case > 0:
+                switch (this.gameObject.name)
+                {
+                    case "AA 1":
+                        if (TotalManagement.Instance.AAI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 2":
+                        if (TotalManagement.Instance.AAII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 3":
+                        if (TotalManagement.Instance.AAIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 4":
+                        if (TotalManagement.Instance.AAIIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 5":
+                        if (TotalManagement.Instance.AAV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 6":
+                        if (TotalManagement.Instance.AAVI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 7":
+                        if (TotalManagement.Instance.AAVII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 8":
+                        if (TotalManagement.Instance.AAVIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 9":
+                        if (TotalManagement.Instance.AAIX != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 10":
+                        if (TotalManagement.Instance.AAX != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 11":
+                        if (TotalManagement.Instance.AAXI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 12":
+                        if (TotalManagement.Instance.AAXII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 13":
+                        if (TotalManagement.Instance.AAXIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 14":
+                        if (TotalManagement.Instance.AAXIV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 15":
+                        if (TotalManagement.Instance.AAXV != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 16":
+                        if (TotalManagement.Instance.AAXVI != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 17":
+                        if (TotalManagement.Instance.AAXVII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                    case "AA 18":
+                        if (TotalManagement.Instance.AAXVIII != true) { AADurability = 0; AAState = AntiAircraftState.NEUTRALISED; }
+                        break;
+                }
+                break;
+            case <= 0:
+                AADurability = 0;
+                AAState = AntiAircraftState.NEUTRALISED;
+                break;
         }
+
+        if (AAState == AntiAircraftState.NEUTRALISED)
+        {
+            yield break;
+        }
+
+        yield return null;
     }
 
     IEnumerator AAinOperation()
     {
-        while (Operation != false)
+        switch (AAState)
         {
-            switch (AAState)
-            {
-                case AntiAircraftState.READY:
-                    AALaying();
-                    break;
-                case AntiAircraftState.AIM:
-                    LockontheTarget();
-                    break;
-                case AntiAircraftState.FIRE:
-                    AAShellFire();
-                    break;
-                case AntiAircraftState.NEUTRALISED:
-                    NeutralisedAA();
-                    break;
-            }
-
-            yield return new WaitForSeconds(1.0f);
+            case AntiAircraftState.READY:
+                AALaying();
+                break;
+            case AntiAircraftState.AIM:
+                AALockon();
+                break;
+            case AntiAircraftState.FIRE:
+                AAShellFire();
+                break;
+            case AntiAircraftState.NEUTRALISED:
+                AANeutralisation();
+                break;
         }
+
+        yield return null;
     }
 
     IEnumerator RecoilAnimation()
     {
         AAFlame.gameObject.SetActive(true);
+
         AAFlame.Play();
 
-        Chronometre += Time.deltaTime;
+        Chronogragh += Time.deltaTime;
 
         Vector3 aaoriginalform = barrel.transform.position;
         Vector3 aarecoiledform = AARecoil.position;
@@ -323,11 +350,11 @@ public class AntiAircraft : MonoBehaviour
             yield return null;
         }
 
-        if (Chronometre >= 1.0f)
+        if (Chronogragh >= 1.0f)
         {
             AAFlame.gameObject.SetActive(false);
 
-            Chronometre = 0;
+            Chronogragh = 0;
         }
 
         barrel.transform.position = aaoriginalform;
@@ -335,31 +362,45 @@ public class AntiAircraft : MonoBehaviour
         AAState = AntiAircraftState.READY;
     }
 
-    void LockontheTarget()
-    {
-        AAGunAngle();
-
-        RaycastHit Detection;
-
-        if (Physics.Raycast(AAFire.position, AAFire.right * 1.5f, out Detection))
-        {
-            if (Detection.collider.CompareTag("AIRPOCKET") || Detection.collider.CompareTag("PROPELLER"))
-            {
-                AAState = AntiAircraftState.FIRE;
-            }
-
-            else if (!Detection.collider.CompareTag("AIRPOCKET") || !Detection.collider.CompareTag("PROPELLER"))
-            {
-                NothingintheAir();
-            }
-        }
-    }
-    
     void AALaying()
     {
-        AASetFireAngle = Random.Range(35.0f, 55.0f);
+        Chronometre += Time.deltaTime;
 
-        AAState = AntiAircraftState.AIM;
+        if (Chronometre >= 1.0f)
+        {
+            AASetFireAngle = Random.Range(35.0f, 55.0f);
+
+            AAState = AntiAircraftState.AIM;
+
+            Chronometre = 0.0f;
+        }
+    }
+
+    void AALockon()
+    {
+        Chronometre += Time.deltaTime;
+        
+        if (Chronometre >= 1.0f)
+        {
+            AAGunAngle();
+
+            RaycastHit Detection;
+
+            if (Physics.Raycast(AAFire.position, AAFire.right * 1.5f, out Detection))
+            {
+                if (Detection.collider.CompareTag("AIRPOCKET") || Detection.collider.CompareTag("PROPELLER"))
+                {
+                    AAState = AntiAircraftState.FIRE;
+                }
+
+                else if (!Detection.collider.CompareTag("AIRPOCKET") || !Detection.collider.CompareTag("PROPELLER"))
+                {
+                    NothingintheAir();
+                }
+            }
+
+            Chronometre = 0.0f;
+        }
     }
 
     void AAGunAngle()
@@ -388,24 +429,27 @@ public class AntiAircraft : MonoBehaviour
 
     void AAShellFire()
     {
-        Instantiate(shell, AAFire.transform.position, AAFire.transform.rotation);
+        Chronometre += Time.deltaTime;
 
-        AASound.PlayOneShot(AASoundEffects[0]);
+        if (Chronometre >= 1.0f)
+        {
+            Instantiate(shell, AAFire.transform.position, AAFire.transform.rotation);
 
-        StartCoroutine(RecoilAnimation());
+            AASound.PlayOneShot(AASoundEffects[0]);
+
+            StartCoroutine(RecoilAnimation());
+
+            Chronometre = 0.0f;
+        }
     }
 
-    void NeutralisedAA()
+    void AANeutralisation()
     {
         AANeutralisedFlame.gameObject.SetActive(true);
 
-        switch (AASound.isPlaying)
+        if (AASound.isPlaying != true)
         {
-            case true:
-                break;
-            case false:
-                AASound.PlayOneShot(AASoundEffects[1]);
-                break;
+            AASound.PlayOneShot(AASoundEffects[1]);
         }
 
         switch (this.gameObject.name)
@@ -466,9 +510,19 @@ public class AntiAircraft : MonoBehaviour
                 break;
         }
 
-        TotalManagement.Instance.Merit += 10;
-        TotalManagement.Instance.Battery -= 1;
+        if (Count != false)
+        {
+            TotalManagement.Instance.Merit += 10;
+            TotalManagement.Instance.Battery -= 1;
+
+            Count = false;
+        }
 
         Destroy(this.gameObject, 3.0f);
     }
+
+    //void Chrono(O o)
+    //{
+    //    enabled = o == O.One;
+    //}
 }

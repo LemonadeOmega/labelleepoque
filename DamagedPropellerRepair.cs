@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class DamagedPropellerRepair : MonoBehaviour
 {
+    public Button DamagedPropellerRepairController;
+
     Airship airship;
     UIPanel uipanel;
     CursorVisualEffect cursorvisualeffect;
@@ -14,6 +16,19 @@ public class DamagedPropellerRepair : MonoBehaviour
         airship = GameObject.Find("Airship").GetComponent<Airship>();
         uipanel = GameObject.Find("UI Panel").GetComponent <UIPanel>();
         cursorvisualeffect = GameObject.Find("You").GetComponent<CursorVisualEffect>();
+    }
+
+    void Update()
+    {
+        switch (TotalManagement.Instance.PresentChronoState)
+        {
+            case O.One:
+                DamagedPropellerRepairController.enabled = true;
+                break;
+            case O.Nought:
+                DamagedPropellerRepairController.enabled = false;
+                break;
+        }
     }
 
     void PropellerRepair()

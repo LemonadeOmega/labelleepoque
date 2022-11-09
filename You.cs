@@ -58,15 +58,45 @@ public class You : MonoBehaviour
 
     void Update()
     {
-        TotalManagement.Instance.Bomb += Time.deltaTime;
+        switch (TotalManagement.Instance.PresentChronoState)
+        {
+            case O.One:
+                StartCoroutine(Bombardment());
+                StartCoroutine(Visualisation());
+                StartCoroutine(AirshipMaintenance());
+                StartCoroutine(AirshipFireExtinguisher());
+                break;
+            case O.Nought:
+                StopAllCoroutines();
+                if (TotalManagement.Instance.Bomb / BombStandby >= 1.0f)
+                {
+                    AirBomb.enabled = false;
+                }
+                if (TotalManagement.Instance.Gondola != false)
+                {
+                    FrontGondola.enabled = false;
+                    RearGondola.enabled = false;
+                }
+                if (airship.AirshipDurability < 3.0f)
+                {
+                    DamagedAirshipMaintenance.enabled = false;
+                }
+                if (TotalManagement.Instance.Fire != false)
+                {
+                    FireExtinguisher.enabled = false;
+                }
+                break;
+        }
 
-        BombPreparationVisualisation.color = BombPreparationColour;
-        BombPreparationColourVisualisation = BombPreparationColour;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            O PresentOState = TotalManagement.Instance.PresentChronoState;
+            O FutureOState = PresentOState == O.One 
+                ? O.Nought 
+                : O.One;
 
-        Bomb();
-        Visualisation();
-        AirshipMaintenance();
-        AirshipFireExtinguisher();
+            TotalManagement.Instance.SetChronoState(FutureOState);
+        }
 
         if (TapCountI == 3 || TapCountII == 3 || TapCountIII == 3 || TapCountIIII == 3 || TapCountV == 3 || TapCountVI == 3)
         {
@@ -117,8 +147,10 @@ public class You : MonoBehaviour
                         if (TapCountI >= 0 || TapCountI <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 25, 90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -126,8 +158,10 @@ public class You : MonoBehaviour
                         if (TapCountII >= 0 || TapCountII <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 25, 90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -135,8 +169,10 @@ public class You : MonoBehaviour
                         if (TapCountIII >= 0 || TapCountIII <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 25, 90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -144,8 +180,10 @@ public class You : MonoBehaviour
                         if (TapCountIIII >= 0 || TapCountIIII <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 25, 90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -153,8 +191,10 @@ public class You : MonoBehaviour
                         if (TapCountV >= 0 || TapCountV <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 0, -90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -162,8 +202,10 @@ public class You : MonoBehaviour
                         if (TapCountVI >= 0 || TapCountVI <= 2)
                         {
                             MachinegunAngle = -Input.GetAxis("Mouse Y") * MachinegunRotationSpeed * Time.deltaTime;
+
                             MachinegunRotationAxisZ += MachinegunAngle;
                             MachinegunRotationAxisZ = Mathf.Clamp(MachinegunRotationAxisZ, 0, -90);
+
                             machinegun.transform.eulerAngles = new Vector3(0, MachinegunRotationAxisY, MachinegunRotationAxisZ);
                         }
                         break;
@@ -172,25 +214,21 @@ public class You : MonoBehaviour
         }
     }
 
-    void Bomb()
+    IEnumerator Bombardment()
     {
         switch (TotalManagement.Instance.Gondola)
         {
             case true:
                 AirBombOutline.gameObject.SetActive(true);
-
                 FrontGondola.enabled = true;
                 FrontGondola.interactable = true;
-
                 RearGondola.enabled = true;
                 RearGondola.interactable = true;
                 break;
             case false:
                 AirBombOutline.gameObject.SetActive(false);
-
                 FrontGondola.enabled = false;
                 FrontGondola.interactable = false;
-
                 RearGondola.enabled = false;
                 RearGondola.interactable = false;
                 break;
@@ -212,10 +250,17 @@ public class You : MonoBehaviour
                 AirBomb.interactable = false;
                 break;
         }
+
+        yield return new WaitForSeconds(0.02f);
     }
 
-    void Visualisation()
+    IEnumerator Visualisation()
     {
+        TotalManagement.Instance.Bomb += Time.deltaTime;
+
+        BombPreparationVisualisation.color = BombPreparationColour;
+        BombPreparationColourVisualisation = BombPreparationColour;
+
         float BombPreparationValue = TotalManagement.Instance.Bomb / BombStandby;
 
         switch (BombPreparationValue)
@@ -230,9 +275,11 @@ public class You : MonoBehaviour
 
         BombPreparationVisualisation.color = BombPreparationColourVisualisation;
         BombPreparationVisualisation.fillAmount = BombPreparationValue;
+
+        yield return new WaitForSeconds(0.02f);
     }
 
-    void AirshipMaintenance()
+    IEnumerator AirshipMaintenance()
     {
         switch (airship.AirshipDurability)
         {
@@ -245,9 +292,11 @@ public class You : MonoBehaviour
                 DamagedAirshipMaintenance.interactable = true;
                 break;
         }
+
+        yield return new WaitForSeconds(0.02f);
     }
 
-    void AirshipFireExtinguisher()
+    IEnumerator AirshipFireExtinguisher()
     {
         switch (TotalManagement.Instance.Fire)
         {
@@ -260,5 +309,7 @@ public class You : MonoBehaviour
                 FireExtinguisher.interactable = false;
                 break;
         }
+
+        yield return new WaitForSeconds(0.02f);
     }
 }

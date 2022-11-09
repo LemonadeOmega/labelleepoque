@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Airship : MonoBehaviour
 {
+    public Text Triumph;
+
     public float AirshipDurability = 0.3f;
     public float Chronometre;
 
@@ -26,21 +29,72 @@ public class Airship : MonoBehaviour
         uipanel = GameObject.Find("UI Panel").GetComponent<UIPanel>();
         camerashake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
 
+        Triumph.gameObject.SetActive(false);
+
         PropellerinOperation = true;
     }
 
     void Update()
     {
-        if (AirshipDurability > 0.3f)
+        StartCoroutine(AirPocketActivation());
+
+        switch (AirshipDurability)
         {
-            AirshipDurability = 0.3f;
+            case > 0.3f:
+                AirshipDurability = 0.3f;
+                break;
+            case < -0.3f:
+                AirshipDurability = -0.3f;
+                break;
         }
 
-        if (AirshipDurability < -0.3f)
+        switch (TotalManagement.Instance.AirRaid)
         {
-            AirshipDurability = -0.3f;
+            case true:
+                if (TotalManagement.Instance.AAI != true && TotalManagement.Instance.AAII != true && TotalManagement.Instance.AAIII != true && TotalManagement.Instance.AAIIII != true && 
+                    TotalManagement.Instance.AAV != true && TotalManagement.Instance.AAVI != true && TotalManagement.Instance.AAVII != true && TotalManagement.Instance.AAVIII != true && 
+                    TotalManagement.Instance.AAIX != true && TotalManagement.Instance.AAX != true && TotalManagement.Instance.AAXI != true && TotalManagement.Instance.AAXII != true &&
+                    TotalManagement.Instance.AAXIII != true)
+                {
+                    Triumph.gameObject.SetActive(true);
+                }
+                break;
+            case false:
+                Vector3 AirshipOriginalAltitude = this.transform.position;
+                Vector3 AirshipSetAltitude = new Vector3(0.0f, AirshipDurability, 0.0f);
+
+                float present = 0.0f;
+                float future = 0.3f;
+                float elapsedrate = present / future;
+
+                while (elapsedrate < 1.0f)
+                {
+                    present += Time.deltaTime;
+                    elapsedrate = present / future;
+
+                    this.transform.position = Vector3.Lerp(AirshipOriginalAltitude, AirshipSetAltitude, elapsedrate);
+
+                    AirshipOriginalAltitude = this.transform.position;
+                }
+                break;
         }
 
+        if (TotalManagement.Instance.Fire != false)
+        {
+            uipanel.alarm = 4;
+        }
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.CompareTag("AIRSHIPFALL"))
+        {
+            Debug.Log("Defeat");
+        }
+    }
+
+    IEnumerator AirPocketActivation()
+    {
         foreach (GameObject AirPocket in AirPockets)
         {
             if (AirPocket.gameObject.activeSelf != true)
@@ -57,40 +111,10 @@ public class Airship : MonoBehaviour
                     AirPocket.gameObject.SetActive(true);
 
                     Chronometre = 0;
+
+                    yield return new WaitForSeconds(0.02f);
                 }
             }
-        }
-
-        if (TotalManagement.Instance.Fire != false)
-        {
-            uipanel.alarm = 4;
-        }
-
-        StartCoroutine(AirshipAltitude());
-    }
-
-    IEnumerator AirshipAltitude()
-    {
-        while (TotalManagement.Instance.AirRaid != false)
-        {
-            Vector3 AirshipOriginalAltitude = this.transform.position;
-            Vector3 AirshipSetAltitude = new Vector3(0.0f, AirshipDurability, 0.0f);
-
-            float present = 0.0f;
-            float future = 0.3f;
-            float elapsedrate = present / future;
-
-            while (elapsedrate < 1.0f)
-            {
-                present += Time.deltaTime;
-                elapsedrate = present / future;
-
-                this.transform.position = Vector3.Lerp(AirshipOriginalAltitude, AirshipSetAltitude, elapsedrate);
-
-                AirshipOriginalAltitude = this.transform.position;
-            }
-
-            yield return null;
         }
     }
 }

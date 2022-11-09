@@ -12,14 +12,10 @@ public class AirBomb : MonoBehaviour
 
     public float ImageAlphaValue = 0.1f;
 
-    Rigidbody rigidbody;
-
     CursorVisualEffect cursorvisualeffect;
 
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
-
         cursorvisualeffect = GameObject.Find("You").GetComponent<CursorVisualEffect>();
 
         this.GetComponent<Image>().alphaHitTestMinimumThreshold = ImageAlphaValue;

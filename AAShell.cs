@@ -16,7 +16,36 @@ public class AAShell : MonoBehaviour
     {
         airship = GameObject.Find("Airship").GetComponent<Airship>();
 
-        StartCoroutine(ShellBallistics());
+        TotalManagement.Instance.ChronoState += Chrono;
+    }
+
+    void Update()
+    {
+        this.transform.Translate(Vector3.right * AAShellScala * Time.deltaTime);
+
+        Chronometre += Time.deltaTime;
+
+        if (Chronometre >= 5.0f)
+        {
+            Instantiate(ExplosionEffect, this.transform.position, Quaternion.identity);
+
+            Collider[] shock = Physics.OverlapSphere(this.transform.position, 0.1f, 1 << 9);
+
+            foreach (var shockdamage in shock)
+            {
+                if (shockdamage.gameObject.CompareTag("AIRPOCKET") || shockdamage.gameObject.CompareTag("HYDROGEN"))
+                {
+                    airship.AirshipDurability -= 0.001f;
+                }
+            }
+
+            Destroy(this.gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        TotalManagement.Instance.ChronoState -= Chrono;
     }
 
     void OnTriggerEnter(Collider collider)
@@ -36,32 +65,8 @@ public class AAShell : MonoBehaviour
         }
     }
 
-    IEnumerator ShellBallistics()
+    void Chrono(O o)
     {
-        while (true)
-        {
-            this.transform.Translate(Vector3.right * AAShellScala * Time.deltaTime);
-
-            Chronometre += Time.deltaTime;
-
-            if (Chronometre >= 5.0f)
-            {
-                Instantiate(ExplosionEffect, this.transform.position, Quaternion.identity);
-
-                Collider[] shock = Physics.OverlapSphere(this.transform.position, 0.1f, 1 << 9);
-
-                foreach (var shockdamage in shock)
-                {
-                    if (shockdamage.gameObject.CompareTag("AIRPOCKET") || shockdamage.gameObject.CompareTag("HYDROGEN"))
-                    {
-                        airship.AirshipDurability -= 0.001f;
-                    }
-                }
-
-                Destroy(this.gameObject);
-            }
-
-            yield return null;
-        }
+        enabled = o == O.One;
     }
 }
