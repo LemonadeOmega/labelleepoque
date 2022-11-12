@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class MachineGunBullet : MonoBehaviour
 {
-    public float scala = 150.0f;
-
     Rigidbody BulletRigidbody;
 
+    float MachineGunBulletAcceleration;
     float Chronometre;
 
     void Start()
@@ -19,14 +18,14 @@ public class MachineGunBullet : MonoBehaviour
 
     void Update()
     {
-        switch (TotalManagement.Instance.PresentChronoState)
+        MachineGunBulletAcceleration += 0.1f;
+        Chronometre += Time.deltaTime;
+
+        this.transform.Translate(Vector3.forward * MachineGunBulletAcceleration * Time.deltaTime);
+
+        if (Chronometre >= 3.0f)
         {
-            case O.One:
-                StartCoroutine(MachineGunBulletAttribute());
-                break;
-            case O.Nought:
-                StopAllCoroutines();
-                break;
+            Destroy(this.gameObject);
         }
     }
 
@@ -41,20 +40,6 @@ public class MachineGunBullet : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-    }
-
-    IEnumerator MachineGunBulletAttribute()
-    {
-        Chronometre += Time.deltaTime;
-
-        BulletRigidbody.AddForce(this.transform.forward * scala * Time.deltaTime);
-
-        if (Chronometre >= 3.0f)
-        {
-            Destroy(this.gameObject);
-        }
-
-        yield return null;
     }
 
     void Chrono(O o)

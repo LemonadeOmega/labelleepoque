@@ -37,247 +37,6 @@ public class MachineGun : MonoBehaviour
         StartCoroutine(MachineGunChronoSystem());
     }
 
-    //void Update()
-    //{
-    //    switch (this.gameObject.name)
-    //    {
-    //        case "MG08 1":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerI)
-    //            {
-    //                case true:
-    //                    AmmunitionReloading.enabled = false;
-    //                    AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    switch (TotalManagement.Instance.PresentChronoState)
-    //                    {
-    //                        case O.One:
-    //                            switch(MachineGunChrono)
-    //                            {
-    //                                case true:
-    //                                    StartCoroutine(Fire());
-    //                                    if (MachineGunMuzzleFlash.isPlaying != true)
-    //                                    {
-    //                                        MachineGunMuzzleFlash.Play();
-    //                                    }
-    //                                    if (MachineGunSound.isPlaying != true)
-    //                                    {
-    //                                        MachineGunSound.PlayOneShot(MachineGunFireSoundEffect);
-    //                                    }
-    //                                    break;
-    //                                case false:
-    //                                    MachineGunMuzzleFlash.Play();
-    //                                    MachineGunSound.UnPause();
-    //                                    MachineGunBulletEjection.Play();
-    //                                    MachineGunChrono = true;
-    //                                    break;
-    //                            }
-    //                            break;
-    //                        case O.Nought:
-    //                            StopAllCoroutines();
-    //                            MachineGunMuzzleFlash.Pause();
-    //                            MachineGunSound.Pause();
-    //                            MachineGunBulletEjection.Pause();
-    //                            MachineGunChrono = false;
-    //                            break;
-    //                    }
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    //MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.Stop();
-    //                    MachineGunChrono = false;
-    //                    overheating = 0.0f;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        AmmunitionReloading.enabled = true;
-    //                        AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerI = false;
-    //            }
-    //            break;
-    //        case "MG08 2":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerII)
-    //            {
-    //                case true:
-    //                    AmmunitionReloading.enabled = false;
-    //                    AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    switch (TotalManagement.Instance.PresentChronoState)
-    //                    {
-    //                        case O.One:
-    //                            StartCoroutine(Fire());
-    //                            break;
-    //                        case O.Nought:
-    //                            StopCoroutine(Fire());
-    //                            MachineGunSound.Pause();
-    //                            MachineGunMuzzleFlash.Pause();
-    //                            break;
-    //                    }
-    //                    MachineGunSound.enabled = true;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(true);
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(false);
-    //                    overheating = 0.0f;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        AmmunitionReloading.enabled = true;
-    //                        AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerII = false;
-    //            }
-    //            break;
-    //        case "MG08 3":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerIII)
-    //            {
-    //                case true:
-    //                    AmmunitionReloading.enabled = false;
-    //                    AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    switch (TotalManagement.Instance.PresentChronoState)
-    //                    {
-    //                        case O.One:
-    //                            StartCoroutine(Fire());
-    //                            break;
-    //                        case O.Nought:
-    //                            StopCoroutine(Fire());
-    //                            break;
-    //                    }
-    //                    MachineGunSound.enabled = true;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(true);
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(false);
-    //                    overheating = 0.0f;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        AmmunitionReloading.enabled = true;
-    //                        AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerIII = false;
-    //            }
-    //            break;
-    //        case "MG08 4":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerIIII)
-    //            {
-    //                case true:
-    //                    AmmunitionReloading.enabled = false;
-    //                    AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    switch (TotalManagement.Instance.PresentChronoState)
-    //                    {
-    //                        case O.One:
-    //                            StartCoroutine(Fire());
-    //                            break;
-    //                        case O.Nought:
-    //                            StopCoroutine(Fire());
-    //                            break;
-    //                    }
-    //                    MachineGunSound.enabled = true;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(true);
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(false);
-    //                    overheating = 0.0f;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        AmmunitionReloading.enabled = true;
-    //                        AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerIIII = false;
-    //            }
-    //            break;
-    //        case "MG08 5":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerV)
-    //            {
-    //                case true:
-    //                    //AmmunitionReloading.enabled = false;
-    //                    //AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    StartCoroutine(Fire());
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(true);
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    //MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(false);
-    //                    overheating = 0;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        //AmmunitionReloading.enabled = true;
-    //                        //AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerV = false;
-    //            }
-    //            break;
-    //        case "MG08 6":
-    //            BulletFire.position = new Vector3(BulletFire.position.x, BulletFire.position.y, -0.3f);
-    //            switch (TotalManagement.Instance.TriggerVI)
-    //            {
-    //                case true:
-    //                    //AmmunitionReloading.enabled = false;
-    //                    //AmmunitionReloading.interactable = false;
-    //                    cooling = 0.0f;
-    //                    StartCoroutine(Fire());
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(true);
-    //                    break;
-    //                case false:
-    //                    StopAllCoroutines();
-    //                    //MachineGunSound.enabled = false;
-    //                    MachineGunMuzzleFlash.gameObject.SetActive(false);
-    //                    overheating = 0;
-    //                    cooling += Time.deltaTime;
-    //                    if (cooling >= 1.0f)
-    //                    {
-    //                        //AmmunitionReloading.enabled = true;
-    //                        //AmmunitionReloading.interactable = true;
-    //                    }
-    //                    break;
-    //            }
-    //            if (overheating >= 60.0f)
-    //            {
-    //                TotalManagement.Instance.TriggerVI = false;
-    //            }
-    //            break;
-    //    }
-    //}
-
     void OnDestroy()
     {
         TotalManagement.Instance.ChronoState -= Chrono;
@@ -466,10 +225,10 @@ public class MachineGun : MonoBehaviour
                 }
                 break;
             case "MG08 5":
-                //MachineGunBulletFire.position = new Vector3(MachineGunBulletFire.position.x, MachineGunBulletFire.position.y, -0.3f);
-                //switch (TotalManagement.Instance.TriggerV)
-                //{
-                //    case true:
+                MachineGunBulletFire.position = new Vector3(MachineGunBulletFire.position.x, MachineGunBulletFire.position.y, -0.3f);
+                switch (TotalManagement.Instance.TriggerV)
+                {
+                    case true:
                 //        AmmunitionReloading.enabled = false;
                 //        AmmunitionReloading.interactable = false;
                 //        cooling = 0.0f;
@@ -488,24 +247,24 @@ public class MachineGun : MonoBehaviour
                 //        {
                 //            TotalManagement.Instance.TriggerV = false;
                 //        }
-                //        break;
-                //    case false:
-                //        MachineGunMuzzleFlash.Stop();
-                //        overheating = 0.0f;
-                //        cooling += Time.deltaTime;
-                //        if (cooling >= 1.0f)
-                //        {
+                        break;
+                    case false:
+                        MachineGunMuzzleFlash.Stop();
+                        overheating = 0.0f;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
                 //            AmmunitionReloading.enabled = true;
                 //            AmmunitionReloading.interactable = true;
-                //        }
-                //        break;
-                //}
+                        }
+                        break;
+                }
                 break;
             case "MG08 6":
-                //MachineGunBulletFire.position = new Vector3(MachineGunBulletFire.position.x, MachineGunBulletFire.position.y, -0.3f);
-                //switch (TotalManagement.Instance.TriggerVI)
-                //{
-                //    case true:
+                MachineGunBulletFire.position = new Vector3(MachineGunBulletFire.position.x, MachineGunBulletFire.position.y, -0.3f);
+                switch (TotalManagement.Instance.TriggerVI)
+                {
+                    case true:
                 //        AmmunitionReloading.enabled = false;
                 //        AmmunitionReloading.interactable = false;
                 //        cooling = 0.0f;
@@ -524,18 +283,18 @@ public class MachineGun : MonoBehaviour
                 //        {
                 //            TotalManagement.Instance.TriggerVI = false;
                 //        }
-                //        break;
-                //    case false:
-                //        MachineGunMuzzleFlash.Stop();
-                //        overheating = 0.0f;
-                //        cooling += Time.deltaTime;
-                //        if (cooling >= 1.0f)
-                //        {
+                        break;
+                    case false:
+                        MachineGunMuzzleFlash.Stop();
+                        overheating = 0.0f;
+                        cooling += Time.deltaTime;
+                        if (cooling >= 1.0f)
+                        {
                 //            AmmunitionReloading.enabled = true;
                 //            AmmunitionReloading.interactable = true;
-                //        }
-                //        break;
-                //}
+                        }
+                        break;
+                }
                 break;
         }
     

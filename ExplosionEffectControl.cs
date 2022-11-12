@@ -13,6 +13,7 @@ public class ExplosionEffectControl : MonoBehaviour
     AudioSource ExplosionSoundControl;
 
     float Chronometre;
+    float AirBombFallAcceleration;
 
     void Start()
     {
@@ -38,6 +39,16 @@ public class ExplosionEffectControl : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (this.gameObject.name == "Air Bomb(Clone)")
+        {
+            AirBombFallAcceleration += 0.04f;
+
+            this.transform.Translate(Vector3.up * AirBombFallAcceleration * Time.deltaTime);
+        }
+    }
+
     IEnumerator AirBombChrono()
     {
         while (true)
@@ -45,11 +56,9 @@ public class ExplosionEffectControl : MonoBehaviour
             switch (TotalManagement.Instance.PresentChronoState)
             {
                 case O.One:
-                    rigidbody.useGravity = true;
                     ExplosionSoundControl.UnPause();
                     break;
                 case O.Nought:
-                    rigidbody.useGravity = false;
                     ExplosionSoundControl.Pause();
                     break;
             }
